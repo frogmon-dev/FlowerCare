@@ -2,15 +2,12 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include "config.h"
-
 #include "Arduino.h"
-#include "heltec.h"
-
 
 // boot count used to check if battery status should be read
 RTC_DATA_ATTR int bootCount = 0;
 
-// device count
+// device MQTT_CLIENTID
 static int deviceCount = sizeof FLORA_DEVICES / sizeof FLORA_DEVICES[0];
 
 // the remote service we wish to connect to
@@ -185,7 +182,6 @@ bool readFloraDataCharacteristic(BLERemoteService* floraService, String baseTopi
 
   char buffer[64];
 
-
   snprintf(buffer, 64, "%f", temperature);
   client.publish((baseTopic + "temperature").c_str(), buffer);
   snprintf(buffer, 64, "%d", moisture);
@@ -196,8 +192,6 @@ bool readFloraDataCharacteristic(BLERemoteService* floraService, String baseTopi
   client.publish((baseTopic + "conductivity").c_str(), buffer);
   snprintf(buffer, 64, "%d", bootCount);
   client.publish((baseTopic + "bootCount").c_str(), buffer);
-
-  
   
   return true;
 }
@@ -301,10 +295,6 @@ void delayedHibernate(void *parameter) {
 }
 
 void setup() {
-  Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
-  Heltec.display->setContrast(255);
-  dspPrintln("Flower Care Start!");
-  
   // all action is done when device is woken up
   Serial.begin(115200);
   delay(1000);
@@ -316,15 +306,13 @@ void setup() {
   xTaskCreate(delayedHibernate, "hibernate", 4096, NULL, 1, &hibernateTaskHandle);
 
   Serial.println("Initialize BLE client...");
-  dspPrintln("Initialize BLE client...");
+  
   BLEDevice::init("");
   BLEDevice::setPower(ESP_PWR_LVL_P7);
 
   // connecting wifi and mqtt server
-  dspPrintln("Wifi Connect.");
   connectWifi();
   
-  dspPrintln("Mqtt Connect.");
   connectMqtt();
   
   // check if battery status should be read - based on boot count
@@ -353,19 +341,8 @@ void setup() {
   // delete emergency hibernate task
   vTaskDelete(hibernateTaskHandle);
 
-  dspPrintln("goto Sleep");
   // go to sleep now
   hibernate();
-}
-
-// OLED display
-void dspPrintln(String str) {
-  Heltec.display->setLogBuffer(5, 30);
-  Heltec.display->clear();
-  Heltec.display->println(str);
-  Heltec.display->drawLogBuffer(0, 0);
-  Heltec.display->display();
-  delay(500);
 }
 
 void loop() {
