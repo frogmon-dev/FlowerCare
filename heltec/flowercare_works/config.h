@@ -1,7 +1,7 @@
   
 // array of different xiaomi flora MAC addresses
 char* FLORA_DEVICES[] = {
-    "C4:7C:8D:6D:6E:60"    
+    "C4:7C:8D:6D:6E:A2"    
     //"c4:7c:8d:6d:6e:a0"
 };
 
@@ -22,9 +22,9 @@ const char*   WIFI_PASSWORD   = "1234567890";
 // where MAC_ADDRESS is one of the values from FLORA_DEVICES array
 // property is either temperature, moisture, conductivity, light or battery
 
-const char*   MQTT_HOST       = "frogmon.synology.me";
-const int     MQTT_PORT       = 8359;
-const char*   MQTT_CLIENTID   = "frogmon";
+const char*   MQTT_HOST       = "192.168.0.19";
+const int     MQTT_PORT       = 1883;
+const char*   MQTT_CLIENTID   = "local";
 const char*   MQTT_USERNAME   = "root";
 const char*   MQTT_PASSWORD   = "PASSWORD";
 const String  MQTT_BASE_TOPIC = "flower01";

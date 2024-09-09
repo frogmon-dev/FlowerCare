@@ -51,8 +51,8 @@ void connectMqtt() {
   client.setServer(MQTT_HOST, MQTT_PORT);
   
   while (!client.connected()) {
-    //if (!client.connect(MQTT_CLIENTID, MQTT_USERNAME, MQTT_PASSWORD)) {
-    if (!client.connect(MQTT_CLIENTID)) {
+    String clientId = String(MQTT_CLIENTID) + "_" + String(MQTT_BASE_TOPIC);
+    if (!client.connect(clientId.c_str())) {
       Serial.print("MQTT connection failed:");
       Serial.print(client.state());
       Serial.println("Retrying...");
